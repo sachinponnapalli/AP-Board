@@ -4,6 +4,7 @@ import 'package:ap_solutions/features/Chapters/screens/chapters_screen.dart';
 import 'package:ap_solutions/features/Class_solutions/bloc/class_solutions_bloc.dart';
 import 'package:ap_solutions/widgets/book_card.dart';
 import 'package:ap_solutions/widgets/chapter_card.dart';
+import 'package:ap_solutions/widgets/title_card.dart';
 import 'package:colorful_safe_area/colorful_safe_area.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -82,76 +83,97 @@ class _ClassSolutionsState extends State<ClassSolutions> {
 
             final mainTitle = classSolutionData.mainTitle!.split('–').last;
 
+            if (classSolutionData.solutions!.length == 1) {
+              SingleChildScrollView(
+                padding: EdgeInsets.all(20.sp),
+                child: Column(
+                  children: [
+                    TitleCard(title: mainTitle),
+                    SizedBox(
+                      height: 15.sp,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: classSolutionData.solutions!.length,
+                      itemBuilder: (context, index) {
+                        final data = classSolutionData.solutions![index];
+                        return Column(
+                          children: [
+                            BookCard(
+                              title: data.title!,
+                              onTapFunction: () {
+                                bloc.add(
+                                    ToggleChildVisibility(childIndex: index));
+                              },
+                            ),
+                            SizedBox(
+                              height: 10.h,
+                            ),
+                            if (showChildData[index])
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: data.childLinks!.length,
+                                itemBuilder: (context, i) {
+                                  final childData = data.childLinks![i];
+                                  return ChapterCard(
+                                    title: childData.childTitle!,
+                                    isLast: data.childLinks!.length - 1 == i,
+                                    onTapFunction: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => ChaptersScreen(
+                                              titleText: childData.childTitle!,
+                                              titleHref: childData.childHref!),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              )
+                          ],
+                        );
+                      },
+                    )
+                  ],
+                ),
+              );
+            }
             return SingleChildScrollView(
               padding: EdgeInsets.all(20.sp),
               child: Column(
                 children: [
-                  Container(
-                    height: 80.h,
-                    padding: EdgeInsets.all(15.sp),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          'assets/vectors/course_herobg.png',
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(10.sp),
-                    ),
-                    child: Text(
-                      mainTitle,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  TitleCard(title: mainTitle),
                   SizedBox(
                     height: 15.sp,
                   ),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemCount: classSolutionData.solutions!.length,
+                    itemCount:
+                        classSolutionData.solutions!.first.childLinks!.length,
                     itemBuilder: (context, index) {
-                      final data = classSolutionData.solutions![index];
+                      final data =
+                          classSolutionData.solutions!.first.childLinks![index];
                       return Column(
                         children: [
                           BookCard(
-                            title: data.title!,
+                            title: data.childTitle!,
                             onTapFunction: () {
-                              bloc.add(
-                                  ToggleChildVisibility(childIndex: index));
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ChaptersScreen(
+                                    titleText: data.childTitle ?? "",
+                                    titleHref: data.childHref ?? "",
+                                  ),
+                                ),
+                              );
                             },
                           ),
                           SizedBox(
                             height: 10.h,
                           ),
-                          if (showChildData[index])
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: data.childLinks!.length,
-                              itemBuilder: (context, i) {
-                                final childData = data.childLinks![i];
-                                return ChapterCard(
-                                  title: childData.childTitle!,
-                                  isLast: data.childLinks!.length - 1 == i,
-                                  onTapFunction: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => ChaptersScreen(
-                                            titleText: childData.childTitle!,
-                                            titleHref: childData.childHref!),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            )
                         ],
                       );
                     },

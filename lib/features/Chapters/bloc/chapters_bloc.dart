@@ -35,7 +35,13 @@ class ChaptersBloc extends Bloc<ChaptersEvent, ChaptersState> {
           emit(ChaptersSucesss(chapterData: modelData, chapterParts: null));
         }
       } else {
-        final data = await FetchChaptersData.fetchChapters(event.titleHref);
+        Map<String, dynamic> data = {};
+        if (event.isIntermediateSolution) {
+          data = await FetchChaptersData.fetchIntermediateChapters(
+              event.titleHref);
+        } else {
+          data = await FetchChaptersData.fetchChapters(event.titleHref);
+        }
 
         final modelData = ChaptersModel.fromJson(data);
         chapterParts = List<bool>.filled(data['solutions'].length, false);
@@ -46,7 +52,6 @@ class ChaptersBloc extends Bloc<ChaptersEvent, ChaptersState> {
     } on SocketException catch (e) {
       emit(NoInternetConnection(screenName: e.toString()));
     } catch (e) {
-      debugPrint(e.toString());
       emit(ChaptersError());
     }
   }

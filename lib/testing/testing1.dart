@@ -14,7 +14,7 @@ class _Testing1State extends State<Testing1> {
 
   @override
   void initState() {
-    getInter();
+    getLowerClass();
     super.initState();
   }
 
@@ -163,6 +163,70 @@ class _Testing1State extends State<Testing1> {
         print("      Child Link: ${link['child_href']}");
       }
     }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  void getLowerClass() async {
+    final url = Uri.parse(
+        "https://apboardsolutions.in/ap-board-5th-class-textbook-solutions/");
+    final response = await http.get(url);
+
+    dom.Document html = dom.Document.html(response.body);
+
+    Map<String, dynamic> data = {};
+
+    dom.Element? startingH2Tag = html.querySelector("div > div > h2");
+    data['mainTitle'] = startingH2Tag!.text;
+    data['solutions'] = [];
+
+    dom.Element? nextUlTag = startingH2Tag.nextElementSibling;
+
+    while (nextUlTag != null) {
+      if (nextUlTag.localName == "ul") {
+        Map<String, dynamic> solnData = {};
+
+        solnData['title'] = "";
+
+        solnData['child_links'] = nextUlTag
+            .querySelectorAll('li')
+            .where((li) {
+              return li.querySelector('a') != null;
+            })
+            .map((li) {
+              final aTag = li.querySelector('a');
+              String childTitle = aTag?.text.trim() ?? '';
+              String? childHref = aTag?.attributes['href'];
+
+              if (childTitle.isNotEmpty && childHref != null) {
+                return {
+                  'child_title': childTitle,
+                  'child_href': childHref,
+                };
+              }
+              return null;
+            })
+            .where((element) => element != null)
+            .toList();
+
+        data['solutions'].add(solnData);
+        break;
+      }
+      nextUlTag = nextUlTag.nextElementSibling;
+    }
+
+    // Print all solutions at the end
+    print("\nAll Solutions Data:");
+    for (var solution in data['solutions']) {
+      print("\nSolution Title: ${solution['title']}");
+      print("Child Links:");
+      for (var childLink in solution['child_links']) {
+        print("  Child Title: ${childLink['child_title']}");
+        print("  Child Href: ${childLink['child_href']}");
+      }
+    }
+
     setState(() {
       loading = false;
     });

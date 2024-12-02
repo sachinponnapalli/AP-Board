@@ -70,6 +70,60 @@ class FetchClassSolutionsData {
       nextPTag = nextPTag.nextElementSibling;
     }
 
+    if (data['solutions'].length == 0) {
+      return getLowerClass(titleHref);
+    }
+
+    return data;
+  }
+
+  static Future<Map<String, dynamic>> getLowerClass(String titleHref) async {
+    final url = Uri.parse(titleHref);
+    final response = await http.get(url);
+
+    dom.Document html = dom.Document.html(response.body);
+
+    Map<String, dynamic> data = {};
+
+    dom.Element? startingH2Tag = html.querySelector("div > div > h2");
+    data['main_title'] = startingH2Tag!.text;
+    data['solutions'] = [];
+
+    dom.Element? nextUlTag = startingH2Tag.nextElementSibling;
+
+    while (nextUlTag != null) {
+      if (nextUlTag.localName == "ul") {
+        Map<String, dynamic> solnData = {};
+
+        solnData['title'] = "issue";
+
+        solnData['child_links'] = nextUlTag
+            .querySelectorAll('li')
+            .where((li) {
+              return li.querySelector('a') != null;
+            })
+            .map((li) {
+              final aTag = li.querySelector('a');
+              String childTitle = aTag?.text.trim() ?? '';
+              String? childHref = aTag?.attributes['href'];
+
+              if (childTitle.isNotEmpty && childHref != null) {
+                return {
+                  'child_title': childTitle,
+                  'child_href': childHref,
+                };
+              }
+              return null;
+            })
+            .where((element) => element != null)
+            .toList();
+
+        data['solutions'].add(solnData);
+        break;
+      }
+      nextUlTag = nextUlTag.nextElementSibling;
+    }
+
     return data;
   }
 }

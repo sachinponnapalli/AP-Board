@@ -15,8 +15,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ChaptersScreen extends StatefulWidget {
   final String titleText;
   final String titleHref;
+  final bool isIntermediateSolution;
   const ChaptersScreen(
-      {super.key, required this.titleText, required this.titleHref});
+      {super.key,
+      required this.titleText,
+      required this.titleHref,
+      this.isIntermediateSolution = false});
 
   @override
   State<ChaptersScreen> createState() => _ChaptersScreenState();
@@ -27,7 +31,9 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
 
   @override
   void initState() {
-    bloc.add(GetChaptersData(titleHref: widget.titleHref));
+    bloc.add(GetChaptersData(
+        titleHref: widget.titleHref,
+        isIntermediateSolution: widget.isIntermediateSolution));
 
     super.initState();
   }

@@ -25,6 +25,8 @@ class _HomeClassTitleCardState extends State<HomeClassTitleCard>
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
+  String title = "";
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +34,10 @@ class _HomeClassTitleCardState extends State<HomeClassTitleCard>
       duration: const Duration(milliseconds: 150),
       vsync: this,
     );
+    List<String> words = widget.data.text!.split(" ");
+
+    title = words.sublist(words.length - 2).join(" ");
+
     _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -114,7 +120,7 @@ class _HomeClassTitleCardState extends State<HomeClassTitleCard>
               ),
               child: Center(
                 child: Text(
-                  widget.data.text ?? "",
+                  title,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 15.sp,

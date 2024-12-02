@@ -1,7 +1,7 @@
 import 'package:ap_solutions/core/theme/app_colors.dart';
 import 'package:ap_solutions/core/theme/theme_data.dart';
 import 'package:ap_solutions/features/Chapters/screens/chapters_screen.dart';
-import 'package:ap_solutions/features/Intermediate_solutions/bloc/intermediate_solutions_bloc.dart';
+import 'package:ap_solutions/features/State_board_notes/bloc/state_board_notes_bloc.dart';
 import 'package:ap_solutions/widgets/book_card.dart';
 import 'package:ap_solutions/widgets/chapter_card.dart';
 import 'package:ap_solutions/widgets/title_card.dart';
@@ -11,22 +11,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class IntermediateSolutionsScreen extends StatefulWidget {
+class StateBoardsNotesScreen extends StatefulWidget {
   final String titleName, titleHref;
-  const IntermediateSolutionsScreen(
+  const StateBoardsNotesScreen(
       {super.key, required this.titleName, required this.titleHref});
 
   @override
-  State<IntermediateSolutionsScreen> createState() =>
-      _IntermediateSolutionsScreenState();
+  State<StateBoardsNotesScreen> createState() => _StateBoardsNotesScreenState();
 }
 
-class _IntermediateSolutionsScreenState
-    extends State<IntermediateSolutionsScreen> {
-  final IntermediateSolutionsBloc bloc = IntermediateSolutionsBloc();
+class _StateBoardsNotesScreenState extends State<StateBoardsNotesScreen> {
+  final StateBoardNotesBloc bloc = StateBoardNotesBloc();
+
   @override
   void initState() {
-    bloc.add(GetIntermediateSolutionsData(titleHref: widget.titleHref));
+    bloc.add(GetStateBoardNotesData(titleHref: widget.titleHref));
     super.initState();
   }
 
@@ -54,33 +53,29 @@ class _IntermediateSolutionsScreenState
             ),
           ),
           title: Text(
-            widget.titleName
-                .split(" ")
-                .sublist(widget.titleName.split(" ").length - 2)
-                .join(" "),
+            "AP State Board Notes",
             style: AppTheme.appBarTitleStyle,
           ),
           centerTitle: true,
         ),
-        body:
-            BlocBuilder<IntermediateSolutionsBloc, IntermediateSolutionsState>(
+        body: BlocBuilder<StateBoardNotesBloc, StateBoardNotesState>(
           bloc: bloc,
           builder: (context, state) {
-            if (state is IntermediateSolutionsInitial ||
-                state is IntermediateSolutionsLoading) {
+            if (state is StateBoardNotesInitial ||
+                state is StateBoardNotesLoading) {
               return const Center(
                 child: CircularProgressIndicator(),
               );
             }
 
-            if (state is IntermediateSolutionsError) {
+            if (state is StateBoardNotesError) {
               return const Center(
                 child: Text("Error"),
               );
             }
 
-            final modelData = (state as IntermediateSolutionsSuccess)
-                .intermediateSolutionsData;
+            final modelData =
+                (state as StateBoardNotesSuccess).stateBoardNotesData;
 
             final showChildData = state.showChildData;
 
@@ -126,10 +121,8 @@ class _IntermediateSolutionsScreenState
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) => ChaptersScreen(
-                                          titleText: childData.childTitle!,
-                                          titleHref: childData.childHref!,
-                                          isIntermediateSolution: true,
-                                        ),
+                                            titleText: childData.childTitle!,
+                                            titleHref: childData.childHref!),
                                       ),
                                     );
                                   },

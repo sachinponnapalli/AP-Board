@@ -118,15 +118,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         SizedBox(
                           height: 10.h,
                         ),
-                        ListView.builder(
+                        GridView.builder(
                           padding: EdgeInsets.zero,
                           physics: const NeverScrollableScrollPhysics(),
-                          // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          //   crossAxisCount: 2,
-                          //   mainAxisSpacing: 15.sp,
-                          //   crossAxisSpacing: 15.sp,
-                          //   childAspectRatio: 150.w / 60.h,
-                          // ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 15.sp,
+                            crossAxisSpacing: 15.sp,
+                            childAspectRatio: 150.w / 60.h,
+                          ),
                           itemCount: homeData.classItems!.length,
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
@@ -141,16 +142,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               colors = [orangeBackground1, orangeBackground2];
                             }
 
-                            return Container(
-                              margin: homeData.classItems!.length - 1 == index
-                                  ? null
-                                  : EdgeInsets.only(bottom: 15.sp),
-                              child: HomeClassTitleCard(
-                                colors: colors,
-                                data: item,
-                                width: 140.w,
-                                height: 50.h,
-                              ),
+                            return HomeClassTitleCard(
+                              colors: colors,
+                              data: item,
+                              width: 140.w,
+                              height: 60.h,
                             );
                           },
                         ),
@@ -197,6 +193,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               colors = [orangeBackground1, orangeBackground2];
                             }
 
+                            if (item.text == "AP Intermediate Study Material") {
+                              return const SizedBox.shrink();
+                            }
                             return Container(
                               margin: homeData.menuItems!.length - 1 == index
                                   ? null

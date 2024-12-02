@@ -5,6 +5,7 @@ import 'package:ap_solutions/features/SCERT_books/bloc/scert_books_bloc.dart';
 import 'package:ap_solutions/widgets/book_card.dart';
 import 'package:ap_solutions/widgets/chapter_card.dart';
 import 'package:ap_solutions/widgets/sub_chapter_card.dart';
+import 'package:ap_solutions/widgets/title_card.dart';
 import 'package:colorful_safe_area/colorful_safe_area.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -83,28 +84,9 @@ class _ScertBooksScreenState extends State<ScertBooksScreen> {
               padding: EdgeInsets.all(20.sp),
               child: Column(
                 children: [
-                  Container(
-                    height: 80.h,
-                    padding: EdgeInsets.all(15.sp),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          'assets/vectors/course_herobg.png',
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(10.sp),
-                    ),
-                    child: Text(
-                      "AP SCERT Textbooks | Classes 1-10 | English & Telugu Medium",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                  const TitleCard(
+                    title:
+                        "AP SCERT Textbooks | Classes 1-10 | English & Telugu Medium",
                   ),
                   SizedBox(
                     height: 15.sp,
